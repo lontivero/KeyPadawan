@@ -88,15 +88,16 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="KeyPadawan\KeyboardInterceptor.cs">
+    <Compile Include="Model\KeyboardInterceptor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\NativeMethods.cs" />
-    <Compile Include="UI\PadawanWindow.xaml.cs">
+    <Compile Include="Windows\AutoHideWindow.cs" />
+    <Compile Include="Windows\NativeMethods.cs" />
+    <Compile Include="View\PadawanWindow.xaml.cs">
       <DependentUpon>PadawanWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\TransparentWindow.cs" />
-    <Compile Include="ViewModel.cs" />
+    <Compile Include="Windows\TransparentWindow.cs" />
+    <Compile Include="ViewModel\ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -120,11 +121,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="UI\PadawanWindow.xaml">
+    <Page Include="View\PadawanWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Themes\Generic.xaml">
+    <Page Include="View\Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

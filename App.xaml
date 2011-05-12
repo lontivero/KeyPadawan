@@ -1,7 +1,7 @@
 ﻿<Application x:Class="KeyPadawan.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    StartupUri="UI\PadawanWindow.xaml">
+    StartupUri="View\PadawanWindow.xaml">
     <Application.Resources>
          
     </Application.Resources>
