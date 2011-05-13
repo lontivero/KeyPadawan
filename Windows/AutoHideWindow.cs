@@ -25,7 +25,7 @@ namespace KeyPadawan.Windows.Controls
                         priority: DispatcherPriority.Normal,
                         callback: new EventHandler(OnTick),
                         dispatcher: Dispatcher);
-            _ticks = 4;
+            _ticks = 4000;
             _timer.Start();
         }
 
@@ -49,7 +49,7 @@ namespace KeyPadawan.Windows.Controls
             {
                 if (value == false)
                 {
-                    _ticks = 4;
+                    _ticks = 4000;
                 }
                 SetValue(IsHidingProperty, value);      
             }

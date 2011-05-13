@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace KeyPadawan.ViewModel
 {
@@ -21,12 +22,22 @@ namespace KeyPadawan.ViewModel
 
         public KeyLogModel()
         {
-            App.ki.KeyIntercepted += new KeyboardInterceptor.KeyboardEventHandler(this.OnKeyPressed);
+            App.ki.KeyPress += OnKeyPressed;
+            App.ki.KeyDown  += OnKeyDown;
+            App.ki.KeyUp    += OnKeyUp;
         }
 
-        private void OnKeyPressed(KeyboardInterceptor.KeyboardEventArgs args)
+        private void OnKeyPressed(object sender, KeyPressEventArgs args)
         {
-            Buffer += args.Ascii;
+            Buffer += args.KeyChar;
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs args)
+        {
+        }
+
+        private void OnKeyUp(object sender, KeyEventArgs args)
+        {
         }
 
         #region INotifyPropertyChanged Members
