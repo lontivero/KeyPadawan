@@ -5,54 +5,84 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Threading;
+using System.Windows.Media.Animation;
 
 namespace KeyPadawan.Windows.Controls
 {
     public class AutoHideWindow : TransparentWindow
     {
-        public static readonly DependencyProperty IsHidingProperty  =
-            DependencyProperty.RegisterAttached("IsHiding", typeof(bool),
-            typeof(DependencyObject), new PropertyMetadata(false));
+        private Storyboard _fadeOutEffect;
 
         private DispatcherTimer _timer;
         private int _ticks;
 
+        public EventHandler<EventArgs> AfterFadeOut;
+
         protected override void OnInitialized(System.EventArgs e)
         {
             base.OnInitialized(e);
+            _fadeOutEffect = BuildFadeOutStoryBoard();
+
             _timer = new DispatcherTimer(
                         interval: TimeSpan.FromSeconds(1),
                         priority: DispatcherPriority.Normal,
                         callback: new EventHandler(OnTick),
                         dispatcher: Dispatcher);
-            _ticks = 4000;
+            _ticks = 3;
             _timer.Start();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Width = SystemParameters.PrimaryScreenWidth;
+            Top = SystemParameters.PrimaryScreenHeight * 2 / 3;
         }
 
         protected override void OnMouseEnter(System.Windows.Input.MouseEventArgs e)
         {
             base.OnMouseEnter(e);
-            IsHiding = false;
+            StopFadingOut();
+        }
+
+        public void StopFadingOut()
+        {
+           _fadeOutEffect.Stop(this);
+           _ticks = 3;
+        }
+
+        private void StartFadingOut()
+        {
+            if(!IsMouseOver)
+ 	            _fadeOutEffect.Begin(this, true);
+        }
+
+        private Storyboard BuildFadeOutStoryBoard()
+        {
+            var duration = new TimeSpan(0, 0, 1);
+            var fadeOutAnimation = new DoubleAnimation(0.0, duration);
+
+            Storyboard.SetTargetProperty(fadeOutAnimation, new PropertyPath(Window.OpacityProperty));
+
+            var winFadeStoryBoard = new Storyboard();
+            winFadeStoryBoard.Children.Add(fadeOutAnimation);
+            winFadeStoryBoard.Completed += new EventHandler(winFadeStoryBoard_Completed);
+            return winFadeStoryBoard;
+        }
+
+        private void winFadeStoryBoard_Completed(object sender, EventArgs e)
+        {
+            var afterFadeOutEventHandler = AfterFadeOut;
+            if (afterFadeOutEventHandler != null)
+            {
+                afterFadeOutEventHandler(this, EventArgs.Empty);
+            }
         }
 
         private void OnTick(object sender, EventArgs args)
         {
             _ticks--;
-            if (_ticks == 0)
-                IsHiding = true;
-        }
-
-        public bool IsHiding
-        {
-            get { return (bool)GetValue(IsHidingProperty); }
-            set 
-            {
-                if (value == false)
-                {
-                    _ticks = 4000;
-                }
-                SetValue(IsHidingProperty, value);      
-            }
+            if (_ticks <= 0)
+                StartFadingOut();
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace KeyPadawan.ViewModel
 {
@@ -29,11 +30,19 @@ namespace KeyPadawan.ViewModel
 
         private void OnKeyPressed(object sender, KeyPressEventArgs args)
         {
-            Buffer += args.KeyChar;
+            if (args.KeyChar == (char)Keys.Enter) return;
+            var c = args.KeyChar;
+
+
+            Buffer += c;
         }
 
         private void OnKeyDown(object sender, KeyEventArgs args)
         {
+            if (args.KeyValue == (int)Keys.Back)
+            {
+                Buffer = Buffer.Substring(0, Buffer.Length - 1);
+            }
         }
 
         private void OnKeyUp(object sender, KeyEventArgs args)

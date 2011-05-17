@@ -283,7 +283,6 @@ using System.Windows.Interop;
             internal const byte VK_NUMLOCK = 0x90;
             internal const byte VK_RALT = 0xA5;
             internal const byte VK_RCONTROL = 0x3;
-            internal const byte VK_ALTGR = 0x78;
 
             internal const int WM_KEYDOWN = 0x100;
             internal const int WM_SYSKEYDOWN = 0x104;

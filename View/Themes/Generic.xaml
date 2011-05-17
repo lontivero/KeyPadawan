@@ -13,6 +13,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style x:Key="{x:Type kwc:TransparentWindow}" TargetType="{x:Type kwc:TransparentWindow}">
         <Setter Property="Height" 
                 Value="140" />
@@ -25,7 +26,9 @@
         <Setter Property="Foreground"
                 Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
         <Setter Property="Background"
-                Value="#7FBFDBFF" />
+                Value="#7f252525" />
+        <!--<Setter Property="Background"
+                Value="#7FBFDBFF" />-->
         <Setter Property="WindowStyle"
                 Value="None" />
         <Setter Property="AllowsTransparency"
@@ -40,6 +43,8 @@
                 Value="Gray" />
         <Setter Property="Visibility"
                 Value="Visible" />
+        <Setter Property="ShowInTaskbar"
+                Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type kwc:AutoHideWindow}">
@@ -115,32 +120,6 @@
                                HorizontalAlignment="Stretch"
                                Margin="16,16,16,16"/>
                     </Grid>
-                    <ControlTemplate.Triggers>
-                        <EventTrigger RoutedEvent ="UIElement.MouseEnter">
-                            <EventTrigger.Actions>
-                                <StopStoryboard BeginStoryboardName="FadeInEffect" />
-                                <StopStoryboard BeginStoryboardName="FadeOutEffect" />
-                                <BeginStoryboard Name="FadeInEffect">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.10" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                                <!--<BeginStoryboard Storyboard="{StaticResource FadeInEffect}" />-->
-                            </EventTrigger.Actions>
-                        </EventTrigger>
-
-                        <Trigger Property="IsHiding" Value="True">
-                            <Trigger.EnterActions>
-                                <StopStoryboard BeginStoryboardName="FadeInEffect" />
-                                <StopStoryboard BeginStoryboardName="FadeOutEffect" />
-                                <BeginStoryboard Name="FadeOutEffect">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0.1" Duration="0:0:1.30" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
