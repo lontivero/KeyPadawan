@@ -7,6 +7,7 @@
     using System.Security;
     using System.Windows.Forms;
 using System.Windows.Interop;
+    using System.Text;
 
     class KeyboardInterceptor : IDisposable
     {
@@ -63,7 +64,7 @@ using System.Windows.Interop;
         {
             if (nCode >= 0) 
             {
-                Keys virtualKeyCode = (Keys)kbdStruct.virtualKeyCode;
+                Keys virtualKeyCode = (Keys)kbdStruct.KeyCode;
                 Keys keyData = BuildKeyData(virtualKeyCode);
                 var keyEventArgs = new KeyEventArgs(keyData);
 
@@ -84,18 +85,26 @@ using System.Windows.Interop;
 
                 if (kbevent == WinApi.WM_KEYDOWN)
                 {
-                    byte[] inBuffer;
+                    string inBuffer;
 
                     if (TryGetAscii(kbdStruct, out inBuffer))
                     {
-                        char key = (char)inBuffer[0];
-                        bool isDownShift = IsKeyPressed(WinApi.VK_SHIFT);
-                        bool isDownCapslock = WinApi.GetKeyState(WinApi.VK_CAPITAL) != 0;
+                        if (inBuffer.Length == 1)
+                        {
+                            char key = inBuffer[0];
+                            bool isDownShift = IsKeyPressed(WinApi.VK_SHIFT);
+                            bool isDownCapslock = WinApi.GetKeyState(WinApi.VK_CAPITAL) != 0;
 
-                        if ((isDownCapslock ^ isDownShift) && Char.IsLetter(key))
-                            key = Char.ToUpper(key);
+                            if ((isDownCapslock ^ isDownShift) && Char.IsLetter(key))
+                                key = Char.ToUpper(key);
 
-                        RaiseKeyPressEvent(key);
+                            RaiseKeyPressEvent(key);
+                        }
+                        else
+                        {
+                            RaiseKeyPressEvent(inBuffer[0]);
+                            RaiseKeyPressEvent(inBuffer[1]);
+                        }
                     }
                 }
             }
@@ -147,18 +156,100 @@ using System.Windows.Interop;
             }
         }
 
-        private static bool TryGetAscii(KBDLLHOOKSTRUCT kbdStruct, out byte[] inBuffer)
+        private static bool TryGetAscii(KBDLLHOOKSTRUCT kbdStruct, out string inBuffer)
         {
             var keyState = new byte[256];
             WinApi.GetKeyboardState(keyState);
-            inBuffer = new byte[2];
-
-            int chars = WinApi.ToAscii(kbdStruct.virtualKeyCode, kbdStruct.scanCode, keyState, inBuffer, kbdStruct.flags);
-            chars = WinApi.ToAscii(kbdStruct.virtualKeyCode, kbdStruct.scanCode, keyState, inBuffer, kbdStruct.flags);
-
-            return chars == 1;
+            inBuffer = ToUnicode(kbdStruct);
+            return !string.IsNullOrEmpty(inBuffer); 
         }
 
+        private static DeadKeyInfo _lastDeadKey;
+
+        private sealed class DeadKeyInfo
+        {
+            public DeadKeyInfo(KBDLLHOOKSTRUCT info, byte[] keyState)
+            {
+                KeyCode = (Keys)info.KeyCode;
+                ScanCode = info.ScanCode;
+
+                KeyboardState = keyState;
+            }
+
+            public readonly Keys KeyCode;
+            public readonly UInt32 ScanCode;
+            public readonly Byte[] KeyboardState;
+        }
+
+        private static string ToUnicode(KBDLLHOOKSTRUCT info)
+        {
+            string result = null;
+
+            var keyState = new byte[256];
+            var buffer = new StringBuilder(128);
+
+            WinApi.GetKeyboardState(keyState);
+
+            var layout = GetForegroundKeyboardLayout();
+            var count = ToUnicode(info.KeyCode, info.ScanCode, keyState, buffer, layout);
+
+            if (count > 0)
+            {
+                result = buffer.ToString(0, count);
+
+                if (_lastDeadKey != null)
+                {
+                    ToUnicode(_lastDeadKey.KeyCode,
+                              _lastDeadKey.ScanCode,
+                              _lastDeadKey.KeyboardState,
+                              buffer,
+                              layout);
+
+                    _lastDeadKey = null;
+                }
+            }
+            else if (count < 0)
+            {
+                _lastDeadKey = new DeadKeyInfo(info, keyState);
+
+                while (count < 0)
+                {
+                    count = ToUnicode(Keys.Decimal, buffer, layout);
+                }
+            }
+
+            return result;
+        }
+
+        private static IntPtr GetForegroundKeyboardLayout()
+        {
+            var foregroundWnd = WinApi.GetForegroundWindow();
+
+            if (foregroundWnd != IntPtr.Zero)
+            {
+                uint processId;
+                uint threadId = WinApi.GetWindowThreadProcessId(foregroundWnd, out processId);
+
+                return WinApi.GetKeyboardLayout(threadId);
+            }
+
+            return IntPtr.Zero;
+        
+        }
+        private static int ToUnicode(Keys vk, StringBuilder buffer, IntPtr hkl)
+        {
+            return ToUnicode(vk, ToScanCode(vk), new byte[256], buffer, hkl);
+        }
+
+        private static int ToUnicode(Keys vk, uint sc, byte[] keyState, StringBuilder buffer, IntPtr hkl)
+        {
+            return WinApi.ToUnicodeEx((uint)vk, sc, keyState, buffer, buffer.Capacity, 0, hkl);
+        }
+
+        private static uint ToScanCode(Keys vk)
+        {
+            return WinApi.MapVirtualKey((uint)vk, 0);
+        }
 
         public void Dispose()
         {
@@ -169,11 +260,11 @@ using System.Windows.Interop;
         [StructLayout(LayoutKind.Sequential)]
         internal struct KBDLLHOOKSTRUCT
         {
-            public int virtualKeyCode;
-            public int scanCode;
-            public int flags;
-            public int time;
-            public int dwExtraInfo;
+            public Keys KeyCode;
+            public uint ScanCode;
+            public uint Flags;
+            public uint Time;
+            public uint ExtraInfo;
         }
 
         [ComVisible(false), SuppressUnmanagedCodeSecurity]
@@ -192,6 +283,7 @@ using System.Windows.Interop;
             internal const byte VK_NUMLOCK = 0x90;
             internal const byte VK_RALT = 0xA5;
             internal const byte VK_RCONTROL = 0x3;
+            internal const byte VK_ALTGR = 0x78;
 
             internal const int WM_KEYDOWN = 0x100;
             internal const int WM_SYSKEYDOWN = 0x104;
@@ -228,6 +320,33 @@ using System.Windows.Interop;
             [return: MarshalAs(UnmanagedType.Bool)]
             [DllImport("user32.dll", SetLastError = true)]
             internal static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+            [DllImport("user32.dll")]
+            internal static extern uint MapVirtualKey(uint uCode, uint uMapType);
+
+            [DllImport("user32.dll")]
+            internal static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[]
+               lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff,
+               int cchBuff, uint wFlags, IntPtr dwhkl);
+            
+            [DllImport("user32.dll")]
+            internal static extern IntPtr GetForegroundWindow();
+
+            [DllImport("user32.dll", SetLastError = true)]
+            internal static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+            [DllImport("user32.dll")]
+            internal static extern IntPtr GetKeyboardLayout(uint idThread);
+        }
+
+
+        internal enum VirtualKeyMapType
+        {
+            VirtualKeyToScanCode = 0,
+            ScanCodeToVirtualKey = 1,
+            VirtualKeyToChar = 2,
+            ScanCodeToVirtualKeyEx = 3,
+            VirtualKeyToScanCodeEx = 4,
         }
     }
 }
