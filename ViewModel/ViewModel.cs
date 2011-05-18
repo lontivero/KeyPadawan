@@ -17,7 +17,6 @@ namespace KeyPadawan.ViewModel
             set
             {
                 buffer = value;
-                Debug.Print("{0} {1}", value, buffer);
                 OnPropertyChanged("Buffer");
             }
         }
