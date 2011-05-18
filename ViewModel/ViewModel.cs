@@ -30,9 +30,8 @@ namespace KeyPadawan.ViewModel
 
         private void OnKeyPressed(object sender, KeyPressEventArgs args)
         {
-            if (args.KeyChar == (char)Keys.Enter) return;
+            if (args.KeyChar == (char)Keys.Enter || args.KeyChar == (char)Keys.Back) return;
             var c = args.KeyChar;
-
 
             Buffer += c;
         }
@@ -41,8 +40,19 @@ namespace KeyPadawan.ViewModel
         {
             if (args.KeyValue == (int)Keys.Back)
             {
-                Buffer = Buffer.Substring(0, Buffer.Length - 1);
+                if (!string.IsNullOrEmpty(Buffer))
+                {
+                    Buffer = Buffer.Substring(0, Buffer.Length - 1);
+                }
             }
+            Debug.Print(args.KeyCode.ToString());
+            //else
+            //{
+            //    if (args.Alt || args.Control)
+            //    {
+            //        Buffer += new KeysConverter().ConvertTo(args.KeyData, typeof(string));
+            //    }
+            //}
         }
 
         private void OnKeyUp(object sender, KeyEventArgs args)

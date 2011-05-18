@@ -24,11 +24,11 @@ namespace KeyPadawan.Windows.Controls
             _fadeOutEffect = BuildFadeOutStoryBoard();
 
             _timer = new DispatcherTimer(
-                        interval: TimeSpan.FromSeconds(1),
+                        interval: TimeSpan.FromMilliseconds(250),
                         priority: DispatcherPriority.Normal,
                         callback: new EventHandler(OnTick),
                         dispatcher: Dispatcher);
-            _ticks = 3;
+            _ticks = 6;
             _timer.Start();
         }
 
@@ -47,18 +47,20 @@ namespace KeyPadawan.Windows.Controls
         public void StopFadingOut()
         {
            _fadeOutEffect.Stop(this);
-           _ticks = 3;
+           _ticks = 6;
         }
 
         private void StartFadingOut()
         {
-            if(!IsMouseOver)
- 	            _fadeOutEffect.Begin(this, true);
+            if (!IsMouseOver)
+            {
+                _fadeOutEffect.Begin(this, true);
+            }
         }
 
         private Storyboard BuildFadeOutStoryBoard()
         {
-            var duration = new TimeSpan(0, 0, 1);
+            var duration = TimeSpan.FromMilliseconds(750);
             var fadeOutAnimation = new DoubleAnimation(0.0, duration);
 
             Storyboard.SetTargetProperty(fadeOutAnimation, new PropertyPath(Window.OpacityProperty));
@@ -80,9 +82,10 @@ namespace KeyPadawan.Windows.Controls
 
         private void OnTick(object sender, EventArgs args)
         {
-            _ticks--;
-            if (_ticks <= 0)
+            if (_ticks-- == 0)
+            {
                 StartFadingOut();
+            }
         }
     }
 }
