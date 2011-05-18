@@ -15,10 +15,14 @@ using System.Windows.Interop;
 
         private LowLevelKeyboardProc keyboardProc;
         private IntPtr previousKeyboardHandler = IntPtr.Zero;
+        private bool isHooked = false;
+        private readonly KeysConverter keyConverter = new KeysConverter();
+        private static DeadKeyInfo _lastDeadKey;
+
+
         public EventHandler<KeyEventArgs> KeyDown;
         public EventHandler<KeyEventArgs> KeyUp;
         public EventHandler<KeyPressEventArgs> KeyPress;
-        private bool isHooked = false;
 
         public KeyboardInterceptor()
         {
@@ -69,10 +73,6 @@ using System.Windows.Interop;
                 var keyEventArgs = new KeyEventArgs(keyData);
 
                 int kbevent = wParam;
-                if (kbevent == WinApi.WM_DEADCHAR || kbevent == WinApi.WM_SYSDEADCHAR)
-                {
-                    System.Diagnostics.Debugger.Break();
-                }
 
                 if (kbevent == WinApi.WM_KEYDOWN || kbevent == WinApi.WM_SYSKEYDOWN)
                 {
@@ -85,25 +85,14 @@ using System.Windows.Interop;
 
                 if (kbevent == WinApi.WM_KEYDOWN)
                 {
-                    string inBuffer;
-
-                    if (TryGetAscii(kbdStruct, out inBuffer))
+                    string buffer = GetAsciiString(kbdStruct);
+                    if (!string.IsNullOrEmpty(buffer))
                     {
-                        if (inBuffer.Length == 1)
+                        foreach (var rawKey in buffer)
                         {
-                            char key = inBuffer[0];
-                            bool isDownShift = IsKeyPressed(WinApi.VK_SHIFT);
-                            bool isDownCapslock = WinApi.GetKeyState(WinApi.VK_CAPITAL) != 0;
-
-                            if ((isDownCapslock ^ isDownShift) && Char.IsLetter(key))
-                                key = Char.ToUpper(key);
+                            var key = keyConverter.ConvertToString(rawKey)[0];
 
                             RaiseKeyPressEvent(key);
-                        }
-                        else
-                        {
-                            RaiseKeyPressEvent(inBuffer[0]);
-                            RaiseKeyPressEvent(inBuffer[1]);
                         }
                     }
                 }
@@ -156,29 +145,9 @@ using System.Windows.Interop;
             }
         }
 
-        private static bool TryGetAscii(KBDLLHOOKSTRUCT kbdStruct, out string inBuffer)
+        private static string GetAsciiString(KBDLLHOOKSTRUCT kbdStruct)
         {
-            var keyState = new byte[256];
-            WinApi.GetKeyboardState(keyState);
-            inBuffer = ToUnicode(kbdStruct);
-            return !string.IsNullOrEmpty(inBuffer); 
-        }
-
-        private static DeadKeyInfo _lastDeadKey;
-
-        private sealed class DeadKeyInfo
-        {
-            public DeadKeyInfo(KBDLLHOOKSTRUCT info, byte[] keyState)
-            {
-                KeyCode = (Keys)info.KeyCode;
-                ScanCode = info.ScanCode;
-
-                KeyboardState = keyState;
-            }
-
-            public readonly Keys KeyCode;
-            public readonly UInt32 ScanCode;
-            public readonly Byte[] KeyboardState;
+            return ToUnicode(kbdStruct);
         }
 
         private static string ToUnicode(KBDLLHOOKSTRUCT info)
@@ -236,6 +205,7 @@ using System.Windows.Interop;
             return IntPtr.Zero;
         
         }
+
         private static int ToUnicode(Keys vk, StringBuilder buffer, IntPtr hkl)
         {
             return ToUnicode(vk, ToScanCode(vk), new byte[256], buffer, hkl);
@@ -256,6 +226,20 @@ using System.Windows.Interop;
             UnHookKeyboard();
         }
 
+        private sealed class DeadKeyInfo
+        {
+            public DeadKeyInfo(KBDLLHOOKSTRUCT info, byte[] keyState)
+            {
+                KeyCode = (Keys)info.KeyCode;
+                ScanCode = info.ScanCode;
+
+                KeyboardState = keyState;
+            }
+
+            public readonly Keys KeyCode;
+            public readonly UInt32 ScanCode;
+            public readonly Byte[] KeyboardState;
+        }
         
         [StructLayout(LayoutKind.Sequential)]
         internal struct KBDLLHOOKSTRUCT

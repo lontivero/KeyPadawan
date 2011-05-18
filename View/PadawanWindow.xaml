@@ -21,7 +21,7 @@
         </Style>
     </kwc:AutoHideWindow.Resources>
     <Grid>
-        <TextBlock Name="textBlock" Text="{Binding Path=Buffer}">
+        <TextBlock Name="textBlock" Text="{Binding Path=Buffer, Mode=OneWay}">
         </TextBlock>
     </Grid>
 </kwc:AutoHideWindow >

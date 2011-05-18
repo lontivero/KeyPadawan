@@ -17,12 +17,15 @@ namespace KeyPadawan.ViewModel
             set
             {
                 buffer = value;
+                Debug.Print("{0} {1}", value, buffer);
                 OnPropertyChanged("Buffer");
             }
         }
 
         public KeyLogModel()
         {
+            Buffer = string.Empty;
+
             App.ki.KeyPress += OnKeyPressed;
             App.ki.KeyDown  += OnKeyDown;
             App.ki.KeyUp    += OnKeyUp;
@@ -30,23 +33,42 @@ namespace KeyPadawan.ViewModel
 
         private void OnKeyPressed(object sender, KeyPressEventArgs args)
         {
-            if (args.KeyChar == (char)Keys.Enter) return;
+            //if (args.KeyChar == (char)Keys.Enter) return;
             var c = args.KeyChar;
 
-
-            Buffer += c;
+            switch ((Keys)c)
+            {
+                case Keys.Back:
+                    RemoveLatestChar();
+                    break;
+                case Keys.Enter:
+                    break;
+            
+                default:
+                    Buffer += c;
+                    break;
+            }
         }
 
         private void OnKeyDown(object sender, KeyEventArgs args)
         {
-            if (args.KeyValue == (int)Keys.Back)
-            {
-                Buffer = Buffer.Substring(0, Buffer.Length - 1);
-            }
+            //var kc = new KeysConverter();
+            ////if(args.Alt || args.Control)
+            ////{
+            //    Buffer += kc.ConvertToString(args.KeyData);
+            ////}
         }
 
         private void OnKeyUp(object sender, KeyEventArgs args)
         {
+        }
+
+        private void RemoveLatestChar()
+        {
+            if (!string.IsNullOrEmpty(Buffer))
+            {
+                Buffer = Buffer.Remove(Buffer.Length - 1);
+            }
         }
 
         #region INotifyPropertyChanged Members
