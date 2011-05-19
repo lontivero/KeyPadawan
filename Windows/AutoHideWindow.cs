@@ -67,7 +67,6 @@ namespace KeyPadawan.Windows.Controls
             Storyboard.SetTargetProperty(fadeOutAnimation, new PropertyPath(Window.OpacityProperty));
 
             var winFadeStoryBoard = new Storyboard();
-            winFadeStoryBoard.FillBehavior = FillBehavior.Stop;
             winFadeStoryBoard.Children.Add(fadeOutAnimation);
             winFadeStoryBoard.Completed += new EventHandler(winFadeStoryBoard_Completed);
             return winFadeStoryBoard;
@@ -80,7 +79,6 @@ namespace KeyPadawan.Windows.Controls
             {
                 afterFadeOutEventHandler(this, EventArgs.Empty);
             }
-            this.Opacity = 0;
         }
 
         private void OnTick(object sender, EventArgs args)
