@@ -31,7 +31,7 @@
 
         private void OnAfterFadeOut(object sender, EventArgs args)
         {
-            model.Buffer = string.Empty;
+            model.CleanBuffer();
         }
     }
 }

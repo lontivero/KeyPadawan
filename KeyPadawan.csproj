@@ -96,6 +96,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="View\KeyNamesConverter.cs" />
     <Compile Include="Windows\AutoHideWindow.cs" />
     <Compile Include="Windows\NativeMethods.cs" />
     <Compile Include="View\PadawanWindow.xaml.cs">

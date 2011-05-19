@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Threading;
 using System.Windows.Media.Animation;
+using System.Diagnostics;
 
 namespace KeyPadawan.Windows.Controls
 {
