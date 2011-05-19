@@ -19,8 +19,10 @@
             model = new KeyLogModel();
             this.DataContext = model;
             this.AfterFadeOut += OnAfterFadeOut;
+            this.IsVisibleChanged += (s, e) => StopFadingOut();
             App.ki.KeyDown += OnKeyDown;
         }
+
 
         private void OnKeyDown(object sender, KeyEventArgs args)
         {
