@@ -101,10 +101,8 @@
                 }
                 else if (thumb.Name.Equals("PART_Move"))
                 {
-                    reducedWidth = Math.Max(reducedWidth, -maxReducedWidth);
-                    reducedHeight = Math.Max(reducedHeight, -maxReducedHeight);
-                    transparentWindow.Left = transparentWindow.Left + reducedWidth;
-                    transparentWindow.Top = transparentWindow.Top + reducedHeight;
+                    transparentWindow.Left += e.HorizontalChange;
+                    transparentWindow.Top += e.VerticalChange;
                 }
             }
         }

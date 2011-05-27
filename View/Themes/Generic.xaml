@@ -15,10 +15,10 @@
     </Style>
 
     <Style x:Key="{x:Type kwc:TransparentWindow}" TargetType="{x:Type kwc:TransparentWindow}">
-        <Setter Property="Height" 
-                Value="100" />
         <Setter Property="Width"
                 Value="240" />
+        <Setter Property="Height" 
+                Value="100" />
         <Setter Property="Focusable"
                 Value="False" />
         <Setter Property="Topmost"
@@ -27,22 +27,18 @@
                 Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
         <Setter Property="Background"
                 Value="#8f202020" />
-        <!--<Setter Property="Background"
-                Value="#7FBFDBFF" />-->
         <Setter Property="WindowStyle"
                 Value="None" />
         <Setter Property="AllowsTransparency"
                 Value="true" />
         <Setter Property="MinHeight"
-                Value="33" />
+                Value="100" />
         <Setter Property="MinWidth"
-                Value="130" />
+                Value="350" />
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="BorderBrush"
                 Value="Gray" />
-        <Setter Property="Visibility"
-                Value="Visible" />
         <Setter Property="ShowInTaskbar"
                 Value="False" />
         <Setter Property="Template">
@@ -52,12 +48,11 @@
                         <Border Background="{TemplateBinding Background}"/>
                         <Border x:Name="windowBorder"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="10"/>
+                                BorderThickness="{TemplateBinding BorderThickness}"/>
                         <AdornerDecorator>
                             <Grid x:Name="contentGrid"
                                   Background="{TemplateBinding Background}"
-                                  Margin="8">
+                                  Margin="5">
                                 <ContentPresenter/>
                             </Grid>
                         </AdornerDecorator>

@@ -33,12 +33,6 @@ namespace KeyPadawan.Windows.Controls
             _timer.Start();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            Width = SystemParameters.PrimaryScreenWidth;
-            Top = SystemParameters.PrimaryScreenHeight * 2 / 3;
-        }
-
         protected override void OnMouseEnter(System.Windows.Input.MouseEventArgs e)
         {
             base.OnMouseEnter(e);
@@ -47,6 +41,7 @@ namespace KeyPadawan.Windows.Controls
 
         public void StopFadingOut()
         {
+            // Visibility = Visibility.Visible;
            _fadeOutEffect.Stop(this);
            _ticks = 6;
         }

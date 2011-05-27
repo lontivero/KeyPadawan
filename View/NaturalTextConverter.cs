@@ -8,7 +8,7 @@ using KeyPadawan.ViewModel;
 
 namespace KeyPadawan.View
 {
-    class KeyNamesConverter : IValueConverter
+    class NaturalTextConverter : IValueConverter
     {
         private KeysConverter _keysConverter = new KeysConverter();
 
@@ -19,9 +19,14 @@ namespace KeyPadawan.View
 
             foreach (var e in buffer)
             {
+                if(IsAltPressed(e.Keys) || IsControlPressed(e.Keys)) continue;
+
                 if (e.IsChar)
                 {
-                    text += e.Char;
+                    if((Keys)e.Char == Keys.Back)
+                        text = RemoveLatestChar(text);
+                    else
+                        text += e.Char;
                 }
                 else
                 {
@@ -31,6 +36,13 @@ namespace KeyPadawan.View
                             text = RemoveLatestChar(text);
                             break;
                         case Keys.Enter:
+                            text += '\u21b5';
+                            break;
+                        case Keys.Escape:
+                            text += '\u238b';
+                            break;
+                        case Keys.Tab:
+                            text += "   ";
                             break;
 
                         default:
@@ -39,7 +51,19 @@ namespace KeyPadawan.View
                     }
                 }
             }
-            return text;
+            
+            var l = text.Length;
+            return text.Substring(l < 30 ? 0 : l - 30);
+        }
+
+        private bool IsControlPressed(Keys keys)
+        {
+            return (keys & Keys.Control) == Keys.Control;
+        }
+
+        private bool IsAltPressed(Keys keys)
+        {
+            return (keys & Keys.Alt) == Keys.Alt;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -49,11 +73,10 @@ namespace KeyPadawan.View
 
         private string RemoveLatestChar(string buffer)
         {
-            if (!string.IsNullOrEmpty(buffer))
+            if (string.IsNullOrEmpty(buffer))
                 return string.Empty;
 
             return buffer.Remove(buffer.Length - 1);
         }
-
     }
 }

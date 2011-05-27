@@ -5,6 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace KeyPadawan.ViewModel
 {
@@ -33,17 +34,27 @@ namespace KeyPadawan.ViewModel
 
         private void OnKeyPressed(object sender, KeyPressEventArgs args)
         {
-            var c = args.KeyChar;
-            AddToBuffer(Event.FromChar(c));
+            if (CharIsPrintable(args.KeyChar))
+            {
+                var c = args.KeyChar;
+                AddToBuffer(Event.FromChar(c));
+            }
+        }
+
+        private static bool CharIsPrintable(char c)
+        {
+            var unicodeCategory = char.GetUnicodeCategory(c);
+            if (((unicodeCategory == UnicodeCategory.Control) && (unicodeCategory != UnicodeCategory.Format)) && ((unicodeCategory != UnicodeCategory.LineSeparator) && (unicodeCategory != UnicodeCategory.ParagraphSeparator)))
+            {
+                return (unicodeCategory == UnicodeCategory.OtherNotAssigned);
+            }
+            return true;
         }
 
         private void OnKeyDown(object sender, KeyEventArgs args)
         {
-            //var kc = new KeysConverter();
-            ////if(args.Alt || args.Control)
-            ////{
-            //    Buffer += kc.ConvertToString(args.KeyData);
-            ////}
+            if(!CharIsPrintable((char)args.KeyValue))
+            AddToBuffer(Event.FromKeys(args.KeyData));
         }
 
         private void OnKeyUp(object sender, KeyEventArgs args)

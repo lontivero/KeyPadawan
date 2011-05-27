@@ -15,15 +15,14 @@
                 Value="50" />
             <Setter Property="Foreground"   
                 Value="White" />
-            <Setter Property="TextAlignment"
+            <Setter Property="HorizontalAlignment"
                     Value="Center" />
             <Setter Property="VerticalAlignment"
                     Value="Center" />
         </Style>
-        <kv:KeyNamesConverter x:Key="KeyNamesConverter" />
+        <kv:NaturalTextConverter x:Key="NaturalTextConverter" />
     </kwc:AutoHideWindow.Resources>
-    <Grid>
-        <TextBlock Name="textBlock" Text="{Binding Path=Buffer, Mode=OneWay, Converter={StaticResource KeyNamesConverter}}">
-        </TextBlock>
-    </Grid>
+    <Viewbox>
+        <TextBlock Name="textBlock" Text="{Binding Path=Buffer, Mode=OneWay, Converter={StaticResource NaturalTextConverter}, NotifyOnTargetUpdated=True}" TargetUpdated="textBlock_TargetUpdated" />
+    </Viewbox>
 </kwc:AutoHideWindow >
