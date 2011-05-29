@@ -21,6 +21,14 @@
             this.DataContext = model;
             this.AfterFadeOut += OnAfterFadeOut;
             this.IsVisibleChanged += (s, e) => StopFadingOut();
+            this.MouseDoubleClick += new System.Windows.Input.MouseButtonEventHandler(PadawanWindow_MouseDoubleClick);
+        }
+
+        void PadawanWindow_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Width = SystemParameters.PrimaryScreenWidth;
+            Top = SystemParameters.PrimaryScreenHeight * 2 / 3;
+            Left = 0;
         }
 
         private void OnAfterFadeOut(object sender, EventArgs args)
@@ -34,10 +42,10 @@
                 StopFadingOut();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            Width = SystemParameters.PrimaryScreenWidth;
-            Top = SystemParameters.PrimaryScreenHeight * 2 / 3;
+            KeyPadawan.Properties.Settings.Default.Save(); 
+            base.OnClosing(e); 
         }
     }
 }

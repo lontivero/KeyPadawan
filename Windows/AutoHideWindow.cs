@@ -41,7 +41,6 @@ namespace KeyPadawan.Windows.Controls
 
         public void StopFadingOut()
         {
-            // Visibility = Visibility.Visible;
            _fadeOutEffect.Stop(this);
            _ticks = 6;
         }

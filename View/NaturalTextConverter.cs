@@ -8,9 +8,18 @@ using KeyPadawan.ViewModel;
 
 namespace KeyPadawan.View
 {
+ 
+
     class NaturalTextConverter : IValueConverter
     {
         private KeysConverter _keysConverter = new KeysConverter();
+        private Dictionary<Keys, Func<string, string>> _translation = new Dictionary<Keys, Func<string, string>>
+        {
+            { Keys.Enter, s=> s + "\u21b5" },
+            { Keys.Escape, s=> s + "\u238b" },
+            { Keys.Tab, s=> s + "   "  },
+            { Keys.Back, s=> RemoveLatestChar(s) } 
+        };
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -23,31 +32,17 @@ namespace KeyPadawan.View
 
                 if (e.IsChar)
                 {
-                    if((Keys)e.Char == Keys.Back)
-                        text = RemoveLatestChar(text);
-                    else
-                        text += e.Char;
+                    text += e.Char;
                 }
                 else
                 {
-                    switch (e.Keys)
+                    if (_translation.ContainsKey(e.Keys))
                     {
-                        case Keys.Back:
-                            text = RemoveLatestChar(text);
-                            break;
-                        case Keys.Enter:
-                            text += '\u21b5';
-                            break;
-                        case Keys.Escape:
-                            text += '\u238b';
-                            break;
-                        case Keys.Tab:
-                            text += "   ";
-                            break;
-
-                        default:
-                            text += _keysConverter.ConvertTo(e.Keys, typeof(string));
-                            break;
+                        text = _translation[e.Keys](text);
+                    }
+                    else
+                    {
+                        text += _keysConverter.ConvertTo(e.Keys, typeof(string));
                     }
                 }
             }
@@ -71,7 +66,7 @@ namespace KeyPadawan.View
             throw new NotImplementedException();
         }
 
-        private string RemoveLatestChar(string buffer)
+        private static string RemoveLatestChar(string buffer)
         {
             if (string.IsNullOrEmpty(buffer))
                 return string.Empty;
