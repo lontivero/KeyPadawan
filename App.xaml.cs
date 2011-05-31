@@ -2,6 +2,7 @@
 {
     using System.Windows;
     using KeyPadawan.Windows.Controls;
+    using System.Reflection;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -21,8 +22,14 @@
         {
             var menu = new System.Windows.Forms.ContextMenu(
                 new[]{
-                    new System.Windows.Forms.MenuItem("About KeyPadawan", (s,a)=>MessageBox.Show("In progress")),
-                    new System.Windows.Forms.MenuItem("-", (s,a)=>MessageBox.Show("In progress")),
+                    new System.Windows.Forms.MenuItem
+                    {
+                        Text = Version,
+                        Enabled = false,
+                    },
+                    new System.Windows.Forms.MenuItem{
+                        Text = "-",
+                    },
                     new System.Windows.Forms.MenuItem("Exit", (s,a)=>MainWindow.Close())
                     // TODO: always visible, filters, dock/undoc
                 });
@@ -42,6 +49,14 @@
         {
             ki.Dispose();
             _notifyIcon.Visible = false;
+        }
+
+        public string Version
+        {
+            get
+            {
+                return "v" + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
         }
     }
 }

@@ -53,7 +53,7 @@ namespace KeyPadawan.ViewModel
 
         private void OnKeyDown(object sender, KeyEventArgs args)
         {
-            if(!CharIsPrintable((char)args.KeyValue))
+            if (args.Control || (args.KeyData >= Keys.F1 && args.KeyData <= Keys.F24))
             AddToBuffer(Event.FromKeys(args.KeyData));
         }
 

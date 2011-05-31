@@ -29,7 +29,7 @@ namespace KeyPadawan.Windows.Controls
                         priority: DispatcherPriority.Normal,
                         callback: new EventHandler(OnTick),
                         dispatcher: Dispatcher);
-            _ticks = 6;
+            ResetCountDown();
             _timer.Start();
         }
 
@@ -42,7 +42,12 @@ namespace KeyPadawan.Windows.Controls
         public void StopFadingOut()
         {
            _fadeOutEffect.Stop(this);
-           _ticks = 6;
+           ResetCountDown();
+        }
+
+        private void ResetCountDown()
+        {
+            _ticks = 6;
         }
 
         private void StartFadingOut()
@@ -50,6 +55,10 @@ namespace KeyPadawan.Windows.Controls
             if (!IsMouseOver)
             {
                 _fadeOutEffect.Begin(this, true);
+            }
+            else
+            {
+                ResetCountDown();
             }
         }
 

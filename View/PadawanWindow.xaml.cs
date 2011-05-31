@@ -21,7 +21,7 @@
             this.DataContext = model;
             this.AfterFadeOut += OnAfterFadeOut;
             this.IsVisibleChanged += (s, e) => StopFadingOut();
-            this.MouseDoubleClick += new System.Windows.Input.MouseButtonEventHandler(PadawanWindow_MouseDoubleClick);
+            this.MouseDoubleClick += PadawanWindow_MouseDoubleClick;
         }
 
         void PadawanWindow_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
