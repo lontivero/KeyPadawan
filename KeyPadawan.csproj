@@ -66,6 +66,12 @@
   <PropertyGroup>
     <RootNamespace>KeyPadawan</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>OpenSource.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -85,6 +91,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\IKeyInterceptor.cs" />
     <Compile Include="Model\NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -102,6 +109,14 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="View\DefaultProcessorsBuilder.cs" />
+    <Compile Include="View\IProcessorsBuilder.cs" />
+    <Compile Include="View\KeyProcessors\CharKeyProcessor.cs" />
+    <Compile Include="View\IEventProcessor.cs" />
+    <Compile Include="View\KeyProcessors\PasswordProcessor.cs" />
+    <Compile Include="View\KeyProcessors\RawProcessor.cs" />
+    <Compile Include="View\KeyProcessors\ShortcutProcessor.cs" />
+    <Compile Include="View\KeyProcessors\SymbolicKeysTranslator.cs" />
     <Compile Include="View\NaturalTextConverter.cs" />
     <Compile Include="Windows\AutoHideWindow.cs" />
     <Compile Include="Windows\NativeMethods.cs" />
@@ -109,7 +124,7 @@
       <DependentUpon>PadawanWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\TransparentWindow.cs" />
-    <Compile Include="ViewModel\ViewModel.cs" />
+    <Compile Include="ViewModel\KeyLogModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -152,6 +167,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="OpenSource.snk" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -1,16 +1,11 @@
-﻿namespace KeyPadawan
+﻿namespace KeyPadawan.Model
 {
     using System;
     using System.Diagnostics;
-    using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
-    using System.Security;
-    using System.Windows.Forms;
-    using System.Windows.Interop;
     using System.Text;
-    using KeyPadawan.Model;
+    using System.Windows.Forms;
 
-    class KeyboardInterceptor : IDisposable
+    class KeyboardInterceptor : IKeyboardInterceptor, IDisposable
     {
         private LowLevelKeyboardProc keyboardProc;
         private IntPtr _previousKeyboardHandler = IntPtr.Zero;
@@ -18,9 +13,9 @@
         private readonly KeysConverter _keyConverter = new KeysConverter();
         private static DeadKeyInfo _lastDeadKey;
 
-        public EventHandler<KeyEventArgs> KeyDown;
-        public EventHandler<KeyEventArgs> KeyUp;
-        public EventHandler<KeyPressEventArgs> KeyPress;
+        private EventHandler<KeyEventArgs> KeyDown;
+        private EventHandler<KeyEventArgs> KeyUp;
+        private EventHandler<KeyPressEventArgs> KeyPress;
         private bool _disposed = false;
 
         public KeyboardInterceptor()
@@ -51,7 +46,9 @@
         private void VerifyPreviousHooking()
         {
             if (_isHooked)
+            {
                 throw new InvalidOperationException("KeyPadawan is already hooked!");
+            }
         }
 
         private void UnHookKeyboard()
@@ -71,10 +68,10 @@
                 Keys keyData = BuildKeyData(virtualKeyCode);
                 var keyEventArgs = new KeyEventArgs(keyData);
 
-                int kbevent = wParam;
 
-                if (kbevent == NativeMethods.WM_KEYDOWN || kbevent == NativeMethods.WM_SYSKEYDOWN)
+                if (wParam == NativeMethods.WM_KEYDOWN || wParam == NativeMethods.WM_SYSKEYDOWN)
                 {
+                    Debug.Print("Press({0})", (int)virtualKeyCode);
                     RaiseKeyDownEvent(keyEventArgs);
 
                     string buffer = ToUnicode(kbdStruct);
@@ -87,8 +84,9 @@
                         }
                     }
                 }
-                else if (kbevent == NativeMethods.WM_KEYUP || kbevent == NativeMethods.WM_SYSKEYUP)
+                else if (wParam == NativeMethods.WM_KEYUP || wParam == NativeMethods.WM_SYSKEYUP)
                 {
+                    Debug.Print("Release({0})", (int)virtualKeyCode);
                     RaiseKeyUpEvent(keyEventArgs);
                 }
             }
@@ -101,11 +99,13 @@
             bool isDownControl = IsKeyPressed(NativeMethods.VK_LCONTROL) || IsKeyPressed(NativeMethods.VK_RCONTROL);
             bool isDownShift = IsKeyPressed(NativeMethods.VK_LSHIFT) || IsKeyPressed(NativeMethods.VK_RSHIFT);
             bool isDownAlt = IsKeyPressed(NativeMethods.VK_LALT) || IsKeyPressed(NativeMethods.VK_RALT) || IsKeyPressed(NativeMethods.VK_RMENU);
+            bool isAltGr = IsKeyPressed(NativeMethods.VK_RMENU) && IsKeyPressed(NativeMethods.VK_LCONTROL);
 
             return virtualKeyCode |
                 (isDownControl ? Keys.Control : Keys.None) |
                 (isDownShift ? Keys.Shift : Keys.None) |
-                (isDownAlt ? Keys.Alt : Keys.None);
+                (isDownAlt ? Keys.Alt : Keys.None) |
+                (isAltGr ? (Keys)524288 : Keys.None);
         }
 
         private static bool IsKeyPressed(byte virtualKeyCode)
@@ -195,7 +195,6 @@
             }
 
             return IntPtr.Zero;
-        
         }
 
         private static int ToUnicode(Keys vk, StringBuilder buffer, IntPtr hkl)
@@ -245,6 +244,24 @@
             public readonly Keys KeyCode;
             public readonly UInt32 ScanCode;
             public readonly Byte[] KeyboardState;
+        }
+
+        event EventHandler<KeyEventArgs> IKeyboardInterceptor.KeyDown
+        {
+            add { this.KeyDown += value; }
+            remove { this.KeyDown -= value; }
+        }
+
+        event EventHandler<KeyEventArgs> IKeyboardInterceptor.KeyUp
+        {
+            add { this.KeyUp += value; }
+            remove { this.KeyUp -= value; }
+        }
+
+        event EventHandler<KeyPressEventArgs> IKeyboardInterceptor.KeyPress
+        {
+            add { this.KeyPress += value; }
+            remove { this.KeyPress -= value; }
         }
     }
 }

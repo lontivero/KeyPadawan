@@ -9,13 +9,11 @@
     /// </summary>
     public partial class App : Application
     {
-        static internal KeyboardInterceptor ki;
         private System.Windows.Forms.NotifyIcon _notifyIcon;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             SetupTrayIcon();
-            ki = new KeyboardInterceptor();
         }
 
         private void SetupTrayIcon()
@@ -47,7 +45,6 @@
 
         protected override void OnExit(ExitEventArgs e)
         {
-            ki.Dispose();
             _notifyIcon.Visible = false;
         }
 
