@@ -6,6 +6,8 @@
     using System.Windows.Forms;
     using System;
     using System.Windows;
+    using System.Windows.Interop;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Interaction logic for Window1.xaml

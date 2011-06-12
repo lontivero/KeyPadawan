@@ -6,4 +6,5 @@
 *.suo
 *.sln.cache
 git*
+TestResults/
 *.csproj.user

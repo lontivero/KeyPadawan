@@ -121,5 +121,14 @@
                                        (int)(Math.Abs(deviceBottomRight.Y - deviceTopLeft.Y)),
                                        0);
         }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+            WindowInteropHelper helper = new WindowInteropHelper(this);
+            NativeMethods.SetWindowLong(helper.Handle, NativeMethods.GWL_EXSTYLE,
+                NativeMethods.GetWindowLong(helper.Handle, NativeMethods.GWL_EXSTYLE) | NativeMethods.WS_EX_NOACTIVATE);
+        }
+
     }
 }
