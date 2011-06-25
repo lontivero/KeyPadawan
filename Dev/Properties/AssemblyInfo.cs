@@ -3,7 +3,7 @@
 using System.Runtime.InteropServices;
 using System.Resources;
 using System.Runtime.CompilerServices;
-[assembly: System.Reflection.AssemblyVersion("0.1.3226.1842")]
+[assembly: System.Reflection.AssemblyVersion("0.2.0.0")]
 [assembly: System.Reflection.AssemblyConfiguration("")]
 [assembly: System.Reflection.AssemblyCompany("Created by: lucas ontivero")]
 [assembly: System.Reflection.AssemblyKeyName("")]
