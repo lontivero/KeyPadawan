@@ -71,7 +71,6 @@
 
                 if (wParam == NativeMethods.WM_KEYDOWN || wParam == NativeMethods.WM_SYSKEYDOWN)
                 {
-                    Debug.Print("Press({0})", (int)virtualKeyCode);
                     RaiseKeyDownEvent(keyEventArgs);
 
                     string buffer = ToUnicode(kbdStruct);
@@ -93,6 +92,7 @@
 
             return NativeMethods.CallNextHookEx(this._previousKeyboardHandler, nCode, wParam, ref kbdStruct);
         }
+
 
         private static Keys BuildKeyData(Keys virtualKeyCode )
         {

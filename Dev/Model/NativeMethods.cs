@@ -35,7 +35,7 @@ namespace KeyPadawan.Model
         internal const byte VK_LCONTROL = 0xA2;
         internal const byte VK_NUMLOCK = 0x90;
         internal const byte VK_RALT = 0xA5;
-        internal const byte VK_RCONTROL = 0x3;
+        internal const byte VK_RCONTROL = 0xA3;
         internal const byte VK_RMENU = 0xA5;
 
         internal const int WM_KEYDOWN = 0x100;

@@ -70,5 +70,41 @@ namespace KeyPadawan.Properties {
                 this["WindowTop"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShortcutsMode {
+            get {
+                return ((bool)(this["ShortcutsMode"]));
+            }
+            set {
+                this["ShortcutsMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RawMode {
+            get {
+                return ((bool)(this["RawMode"]));
+            }
+            set {
+                this["RawMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool NormalMode {
+            get {
+                return ((bool)(this["NormalMode"]));
+            }
+            set {
+                this["NormalMode"] = value;
+            }
+        }
     }
 }

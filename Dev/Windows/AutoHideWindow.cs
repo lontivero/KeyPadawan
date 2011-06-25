@@ -17,7 +17,7 @@ namespace KeyPadawan.Windows.Controls
         private DispatcherTimer _timer;
         private int _ticks;
 
-        public EventHandler<EventArgs> AfterFadeOut;
+        public EventHandler<EventArgs> AfterFadeout;
 
         protected override void OnInitialized(System.EventArgs e)
         {
@@ -47,7 +47,7 @@ namespace KeyPadawan.Windows.Controls
 
         private void ResetCountDown()
         {
-            _ticks = 6;
+            _ticks = 3;
         }
 
         private void StartFadingOut()
@@ -77,7 +77,7 @@ namespace KeyPadawan.Windows.Controls
 
         private void winFadeStoryBoard_Completed(object sender, EventArgs e)
         {
-            var afterFadeOutEventHandler = AfterFadeOut;
+            var afterFadeOutEventHandler = AfterFadeout;
             if (afterFadeOutEventHandler != null)
             {
                 afterFadeOutEventHandler(this, EventArgs.Empty);

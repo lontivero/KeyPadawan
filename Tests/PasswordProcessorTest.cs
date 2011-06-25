@@ -15,11 +15,11 @@ namespace KeyPadawanTests
             var builder = new FakeProcessorsBuilder(new[] { new PasswordProcessor() });
             var converter = new NaturalTextConverter(builder);
             var events = new[] {
-                Event.FromChar('1'), Event.FromChar('a'),
-                Event.FromKeys(Keys.Control | Keys.K), Event.FromKeys(Keys.Control | Keys.L),  // password mode shortcut (E)
-                Event.FromChar('p'), Event.FromChar('a'), Event.FromChar('s'), Event.FromChar('s'),
-                Event.FromKeys(Keys.Control | Keys.K), Event.FromKeys(Keys.Control | Keys.L),  // password mode shortcut (D)
-                Event.FromChar('3'), Event.FromChar('7'),
+                KeyboardEvent.FromChar('1'), KeyboardEvent.FromChar('a'),
+                KeyboardEvent.FromKeys(Keys.Control | Keys.K), KeyboardEvent.FromKeys(Keys.Control | Keys.L),  // password mode shortcut (E)
+                KeyboardEvent.FromChar('p'), KeyboardEvent.FromChar('a'), KeyboardEvent.FromChar('s'), KeyboardEvent.FromChar('s'),
+                KeyboardEvent.FromKeys(Keys.Control | Keys.K), KeyboardEvent.FromKeys(Keys.Control | Keys.L),  // password mode shortcut (D)
+                KeyboardEvent.FromChar('3'), KeyboardEvent.FromChar('7'),
             };
 
             var actual = converter.Convert(events, null, null, null);

@@ -11,7 +11,6 @@ using System.Runtime.CompilerServices;
 [assembly: System.Reflection.AssemblyDelaySign(false)]
 [assembly: System.Reflection.AssemblyDescription("Key Padawan")]
 [assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)]
-[assembly: System.Reflection.AssemblyKeyFile("")]
 [assembly: System.Runtime.CompilerServices.CompilationRelaxations(8)]
 [assembly: System.Reflection.AssemblyTitle("KeyPadawan")]
 [assembly: System.CLSCompliant(true)]

@@ -7,7 +7,7 @@ using System.Windows.Forms;
     {
         private KeysConverter _converter = new KeysConverter();
 
-        public bool TryProcessEvent(Event evnt, out string result)
+        public bool TryProcessEvent(KeyboardEvent evnt, out string result)
         {
             result = null;
             if (evnt.Keys.HasFlag((Keys)524288))
@@ -22,13 +22,12 @@ using System.Windows.Forms;
                 result = evnt.Char.ToString();
                 return true;
             }
-            else if (n != Keys.LControlKey && n != Keys.RControlKey && n != Keys.LShiftKey && n != Keys.RShiftKey)
+            else
             {
                 result = _converter.ConvertToString(evnt.Keys);
+                result = result.Replace("+None", "");
                 return true;
             }
-
-            return false;
         }
     }
 

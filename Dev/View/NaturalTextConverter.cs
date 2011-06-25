@@ -10,7 +10,7 @@
         private readonly IProcessorsBuilder _processorsBuilder;
 
         public NaturalTextConverter()
-            : this(new DefaultProcessorsBuilder())
+            : this(new ProcessorsBuilder())
         {
         }
 
@@ -24,7 +24,7 @@
             var _chainOfProcessors = _processorsBuilder.Build();
 
             var textToDisplay = string.Empty;
-            var buffer = (IEnumerable<Event>)value;
+            var buffer = (IEnumerable<KeyboardEvent>)value;
 
             foreach (var evnt in buffer)
             {

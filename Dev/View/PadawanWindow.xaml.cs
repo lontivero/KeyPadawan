@@ -21,7 +21,7 @@
             InitializeComponent();
             model = new KeyLogModel();
             this.DataContext = model;
-            this.AfterFadeOut += OnAfterFadeOut;
+            this.AfterFadeout += OnAfterFadeOut;
             this.IsVisibleChanged += (s, e) => StopFadingOut();
             this.MouseDoubleClick += PadawanWindow_MouseDoubleClick;
         }

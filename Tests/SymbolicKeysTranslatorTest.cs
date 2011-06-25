@@ -16,7 +16,7 @@ namespace KeyPadawanTests
         {
             var builder = new FakeProcessorsBuilder(new[] { new SymbolicKeysTranslator() });
             var converter = new NaturalTextConverter(builder);
-            var events = new [] { Event.FromKeys(Keys.Enter), Event.FromKeys(Keys.Escape) };
+            var events = new [] { KeyboardEvent.FromKeys(Keys.Enter), KeyboardEvent.FromKeys(Keys.Escape) };
 
             var actual = converter.Convert(events, null, null, null);
 
@@ -36,6 +36,12 @@ namespace KeyPadawanTests
         public System.Collections.Generic.IEnumerable<IEventProcessor> Build()
         {
             return _processors;
+        }
+
+
+        public void Set(ShortcutProcessor[] shortcutProcessor)
+        {
+            throw new NotImplementedException();
         }
     }
 }

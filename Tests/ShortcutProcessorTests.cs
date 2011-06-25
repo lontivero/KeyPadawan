@@ -16,13 +16,13 @@ namespace KeyPadawanTests
         [TestMethod]
         public void AllInOne()
         {
-            var converter = new NaturalTextConverter(new DefaultProcessorsBuilder());
+            var converter = new NaturalTextConverter(new ProcessorsBuilder());
             var events = new[] {
-                Event.FromChar('1'), Event.FromChar('a'),
-                Event.FromKeys(Keys.Control | Keys.K), Event.FromKeys(Keys.Control | Keys.L),  
-                Event.FromChar('p'), Event.FromChar('a'), Event.FromChar('s'), Event.FromChar('s'), Event.FromKeys(Keys.Enter),
-                Event.FromKeys(Keys.Control | Keys.K), Event.FromKeys(Keys.Control | Keys.L),  
-                Event.FromChar('3'), Event.FromChar('7'), Event.FromKeys(Keys.Escape), Event.FromKeys(Keys.Tab)
+                KeyboardEvent.FromChar('1'), KeyboardEvent.FromChar('a'),
+                KeyboardEvent.FromKeys(Keys.Control | Keys.K), KeyboardEvent.FromKeys(Keys.Control | Keys.L),  
+                KeyboardEvent.FromChar('p'), KeyboardEvent.FromChar('a'), KeyboardEvent.FromChar('s'), KeyboardEvent.FromChar('s'), KeyboardEvent.FromKeys(Keys.Enter),
+                KeyboardEvent.FromKeys(Keys.Control | Keys.K), KeyboardEvent.FromKeys(Keys.Control | Keys.L),  
+                KeyboardEvent.FromChar('3'), KeyboardEvent.FromChar('7'), KeyboardEvent.FromKeys(Keys.Escape), KeyboardEvent.FromKeys(Keys.Tab)
             };
 
             var actual = converter.Convert(events, null, null, null);
@@ -35,9 +35,9 @@ namespace KeyPadawanTests
         {
             var converter = new NaturalTextConverter(new FakeProcessorsBuilder(new [] { new ShortcutProcessor() } ) );
             var events = new[] {
-                Event.FromKeys(Keys.Control),  
-                Event.FromKeys(Keys.Alt),  
-                Event.FromKeys(Keys.Control | Keys.I)
+                KeyboardEvent.FromKeys(Keys.Control | Keys.LControlKey),  
+                KeyboardEvent.FromKeys(Keys.Alt ),  
+                KeyboardEvent.FromKeys(Keys.Control | Keys.I)
             };
 
             var actual = converter.Convert(events, null, null, null);
@@ -46,15 +46,75 @@ namespace KeyPadawanTests
         }
 
         [TestMethod]
+        public void IgnoreCtrlandAlt2()
+        {
+            var converter = new NaturalTextConverter(new FakeProcessorsBuilder(new IEventProcessor[] { new ShortcutProcessor(), new RawProcessor() }));
+            var events = new[] {
+                KeyboardEvent.FromKeys(Keys.Control),  
+                KeyboardEvent.FromKeys(Keys.Alt),  
+                KeyboardEvent.FromKeys(Keys.Control | Keys.I)
+            };
+
+            var actual = converter.Convert(events, null, null, null);
+
+            Assert.AreEqual("CtrlAltCtrl+I", actual);
+        }
+
+        [TestMethod]
+        public void IgnoreLMenu()
+        {
+            var converter = new NaturalTextConverter(new FakeProcessorsBuilder(new IEventProcessor[] { new ShortcutProcessor(), new RawProcessor() }));
+            var events = new[] {
+                KeyboardEvent.FromKeys(Keys.LMenu),  
+                KeyboardEvent.FromKeys(Keys.LMenu),  
+                KeyboardEvent.FromKeys(Keys.LMenu),  
+                KeyboardEvent.FromKeys(Keys.LMenu)  
+            };
+
+            var actual = converter.Convert(events, null, null, null);
+
+            Assert.AreEqual("", actual);
+        }
+
+        [TestMethod]
         public void RepeatCtrl()
         {
             var converter = new NaturalTextConverter(new FakeProcessorsBuilder(new[] { new ShortcutProcessor() }));
             var events = new[] {
-                Event.FromKeys(Keys.LControlKey),  
-                Event.FromKeys(Keys.LControlKey),  
-                Event.FromKeys(Keys.LControlKey),  
-                Event.FromKeys(Keys.Control),  
-                Event.FromKeys(Keys.LControlKey)  
+                KeyboardEvent.FromKeys(Keys.LControlKey),  
+                KeyboardEvent.FromKeys(Keys.LControlKey),  
+                KeyboardEvent.FromKeys(Keys.LControlKey),  
+                KeyboardEvent.FromKeys(Keys.Control),  
+                KeyboardEvent.FromKeys(Keys.LControlKey)  
+            };
+
+            var actual = converter.Convert(events, null, null, null);
+
+            Assert.AreEqual("", actual);
+        }
+
+        [TestMethod]
+        public void IgnoreDownLeftRightUp()
+        {
+            var converter = new NaturalTextConverter(new FakeProcessorsBuilder(new[] { new ShortcutProcessor() }));
+            var events = new[] {
+                KeyboardEvent.FromKeys(Keys.Down),  
+                KeyboardEvent.FromKeys(Keys.Up),  
+                KeyboardEvent.FromKeys(Keys.Left),
+                KeyboardEvent.FromKeys(Keys.Right),
+            };
+
+            var actual = converter.Convert(events, null, null, null);
+
+            Assert.AreEqual("", actual);
+        }
+
+        [TestMethod]
+        public void IgnoreCtrlShiptOnly()
+        {
+            var converter = new NaturalTextConverter(new FakeProcessorsBuilder(new[] { new ShortcutProcessor() }));
+            var events = new[] {
+                KeyboardEvent.FromKeys(Keys.Control | Keys.LShiftKey ),  
             };
 
             var actual = converter.Convert(events, null, null, null);

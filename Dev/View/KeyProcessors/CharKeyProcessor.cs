@@ -5,9 +5,7 @@
 
     class CharKeyProcessor : IEventProcessor
     {
-        private KeysConverter _keysConverter = new KeysConverter();
-
-        public bool TryProcessEvent(Event evnt, out string result)
+        public bool TryProcessEvent(KeyboardEvent evnt, out string result)
         {
             result = null;
             if (evnt.IsChar)

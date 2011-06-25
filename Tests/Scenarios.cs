@@ -18,7 +18,7 @@ namespace KeyPadawanTests
             string text = string.Empty;
 
             var interceptor = new FakeKeyboardInterceptor();
-            var converter = new NaturalTextConverter(new DefaultProcessorsBuilder());
+            var converter = new NaturalTextConverter(new ProcessorsBuilder());
             var viewModel = new KeyLogModel(interceptor);
             viewModel.PropertyChanged += (o,e)=> text = (string)converter.Convert(viewModel.Buffer, null, null, null);
 

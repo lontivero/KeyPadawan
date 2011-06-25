@@ -14,10 +14,9 @@
             { Keys.Right, "\u21e8" },
             { Keys.Up, "\u21e7" },
             { Keys.Down, "\u21e9" }
-
         };
 
-        public bool TryProcessEvent(Event evnt, out string result)
+        public bool TryProcessEvent(KeyboardEvent evnt, out string result)
         {
             result = null;
 

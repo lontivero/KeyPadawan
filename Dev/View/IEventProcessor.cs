@@ -4,6 +4,6 @@
 
     interface IEventProcessor
     {
-        bool TryProcessEvent(Event evnt, out string result);
+        bool TryProcessEvent(KeyboardEvent evnt, out string result);
     }
 }

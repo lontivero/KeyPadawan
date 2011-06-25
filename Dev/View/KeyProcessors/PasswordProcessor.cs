@@ -10,7 +10,7 @@
         private int _startIndex = 0;
         private int _endIndex = int.MaxValue;
 
-        public bool TryProcessEvent(Event evnt, out string result)
+        public bool TryProcessEvent(KeyboardEvent evnt, out string result)
         {
             result = null;
             var k = evnt.Keys;

@@ -10,7 +10,7 @@ namespace KeyPadawan.ViewModel
 {
     public class KeyLogModel : INotifyPropertyChanged
     {
-        private List<Event> _buffer = new List<Event>();
+        private List<KeyboardEvent> _buffer = new List<KeyboardEvent>();
         private IKeyboardInterceptor _interceptor;
 
         internal KeyLogModel()
@@ -27,12 +27,12 @@ namespace KeyPadawan.ViewModel
             _interceptor.KeyUp += OnKeyUp;
         }
 
-        public Event[] Buffer
+        public KeyboardEvent[] Buffer
         {
             get { return _buffer.ToArray(); }
         }
 
-        private void AddToBuffer(Event evnt)
+        private void AddToBuffer(KeyboardEvent evnt)
         {
             _buffer.Add(evnt);
             OnPropertyChanged("Buffer");
@@ -40,10 +40,10 @@ namespace KeyPadawan.ViewModel
 
         private void OnKeyPressed(object sender, KeyPressEventArgs args)
         {
-            if (CharIsPrintable(args.KeyChar))
+            if (CharIsPrintable(args.KeyChar) || args.KeyChar == '\b')
             {
                 var c = args.KeyChar;
-                AddToBuffer(Event.FromChar(c));
+                AddToBuffer(KeyboardEvent.FromChar(c));
             }
         }
 
@@ -59,21 +59,35 @@ namespace KeyPadawan.ViewModel
 
         private void OnKeyDown(object sender, KeyEventArgs args)
         {
-            var special = new [] {
-                Keys.Escape, Keys.Enter, 
-                Keys.Insert, Keys.Delete,
-                Keys.PageUp , Keys.PageDown,
-                Keys.Pause , Keys.Play , Keys.PrintScreen,
-                Keys.Up, Keys.Down , Keys.Left , Keys.Right,
-                Keys.Tab,
-                Keys.Home, Keys.End
-            };
+            var k = args.KeyCode;
+            var isPrintableKey =
+                (k >= Keys.D0 && k <= Keys.D9) ||
+                (k >= Keys.A && k <= Keys.Z) ||
+                (k >= Keys.NumPad0 && k <= Keys.NumPad9)
+                || k == Keys.Space
+                || k == Keys.Multiply
+                || k == Keys.Add
+                || k == Keys.Separator
+                || k == Keys.Subtract
+                || k == Keys.Decimal
+                || k == Keys.Divide
+                || k == Keys.OemSemicolon
+                || k == Keys.Oemplus
+                || k == Keys.Oemcomma
+                || k == Keys.OemMinus
+                || k == Keys.OemPeriod
+                || k == Keys.OemQuestion
+                || k == Keys.Oemtilde
+                || k == Keys.OemOpenBrackets
+                || k == Keys.OemPipe
+                || k == Keys.OemCloseBrackets
+                || k == Keys.OemQuotes
+                || k == Keys.OemBackslash
+                || k == Keys.OemClear;
 
-            var isSpecial = special.Contains(args.KeyCode);
-
-            if (args.Control || args.Alt || isSpecial || args.KeyData >= Keys.F1 && args.KeyData <= Keys.F24)
+            if (!isPrintableKey || args.Alt || args.Control)
             {
-                AddToBuffer(Event.FromKeys(args.KeyData));
+                AddToBuffer(KeyboardEvent.FromKeys(args.KeyData));
             }
         }
 
@@ -97,17 +111,17 @@ namespace KeyPadawan.ViewModel
         }
     }
 
-    public class Event
+    public class KeyboardEvent
     {
-        private Event(){}
-        public static Event FromKeys(Keys k)
+        private KeyboardEvent(){}
+        public static KeyboardEvent FromKeys(Keys keys)
         {
-            return new Event{ Keys = k, Char = '\0' };
+            return new KeyboardEvent{ Keys = keys, Char = '\0' };
         }
 
-        public static Event FromChar(char c)
+        public static KeyboardEvent FromChar(char character)
         {
-            return new Event{ Keys = Keys.None, Char = c };
+            return new KeyboardEvent{ Keys = Keys.None, Char = character };
         }
 
         public bool IsChar { get { return Char != '\0'; } }
